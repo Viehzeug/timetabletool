@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/dropzone/dist/min/dropzone.min.css" />
+    <link rel="stylesheet" href="bower_components/angular-color-picker/dist/angularjs-color-picker.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="angularApp">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <!-- Add your site or application content here -->
+
+    <div class="container" style="width:70%; float:left;">
+
+
+      <div ng-controller="uploadController" ng-show="show">
+        <div id="dropzoneIcs" class="dropzone"></div>
+      </div>
+
+      <div ng-controller="displayController" ng-show="show">
+        <svg id="svgTarget" style="width: 100%; height: 100%"></svg>
+      </div>
+
+    </div>
+
+    <!-- TODO css style -->
+    <div class="container" style="width:30%; float:left;">
+
+      <div ng-controller="menuController" ng-show="show">
+        <form>
+
+          <div class="alert alert-warning" role="alert">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+            <span class="sr-only">Warning:</span>
+            Adjust start and end time first, they will reset a lot of value
+          </div>
+
+          
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Start Time</span>
+            <input type="number" class="form-control" data-ng-model="controls.startTime" />
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">End Time</span>
+            <input type="number" class="form-control" data-ng-model="controls.endTime" />
+          </div>
+
+          <hr />
+
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Height</span>
+            <input type="number" class="form-control" data-ng-model="controls.height" />
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Width</span>
+            <input type="number" class="form-control" data-ng-model="controls.width" />
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Font Size</span>
+            <input type="number" class="form-control" data-ng-model="controls.fontSize" />
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Font Size Header</span>
+            <input type="number" step="any" class="form-control" data-ng-model="controls.fontSizeHeader"/>
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Stroke Width</span>
+            <input type="number" step="any" class="form-control" data-ng-model="controls.strokeWidth"/>
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Fill Opacity</span>
+            <input type="number" class="form-control" data-ng-model="controls.fillOpacity"/>
+          </div>
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Wordwrap</span>
+            <input type="number" class="form-control" data-ng-model="controls.wordwrap" />
+          </div>
+
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon" id="basic-addon1">Line hight:</span>
+            <input type="number" step="any" class="form-control" data-ng-model="controls.lineHeight" />
+          </div>
+
+          <ul style="list-style-type: none;">
+            <li ng-repeat="c in colors">
+              <color-picker ng-model="c.color"
+                            color-picker-format="'hex'"
+                            color-picker-alpha="false"
+                            color-picker-swatch="true"
+                            color-picker-swatch-only="true">
+              </color-picker>
+              <span>{{c.name}}</span>
+            </li>
+          </ul>
+
+          <button ng-click="newEntry()" type="button" class="btn btn-default btn-sm ">Add Entry</button>
+
+          <button ng-click="download()" type="button" class="btn btn-default btn-sm ">Download</button>
+          
+          <button ng-click="reset()" type="button" class="btn btn-default btn-sm btn-danger">Reset</button>
+
+        </form>
+      </div>
+
+    </div>
+
+    <script type="text/ng-template" id="detailModal.html">
+      <div class="modal-header">
+        <h3 class="modal-title">{{data.name}}</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="detail-name">Name:</label>
+          <input id="detail-name" type="text" class="form-control" data-ng-model="data.name" />
+        </div>
+        <div class="form-group">
+          <label for="detail-displayName">Display Name:</label> <input type="checkbox" ng-model="data.useDefaultDisplayText">use default display name</input>
+          <textarea class="form-control" ng-disabled="data.useDefaultDisplayText" rows="{{data.displayNameRows}}" id="detail-displayName" ng-model="data.displayName"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="detail-from">From:</label>
+          <input id="detail-from" type="number" class="form-control" data-ng-model="data.start" />
+        </div>
+        <div class="form-group">
+          <label for="detail-end">End:</label>
+          <input id="detail-end" type="number" class="form-control" data-ng-model="data.end" />
+        </div>
+        <div class="form-group">
+          <label for="detail-end">Location:</label>
+          <input id="detail-end" type="text" class="form-control" data-ng-model="data.location" />
+        </div>
+
+        <div class="form-group">
+          <label for="detail-group">Weekday:</label>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+              {{colheaders[data.dayOfWeek-2]}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li ng-repeat="c in colheaders"><a ng-click="data.dayOfWeek = $index+2" href="#">{{c}}</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-group" ng-show="!isNew">
+          <label for="detail-group">Group:</label>
+          <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+              {{data.group}}
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+              <li ng-repeat="g in data.groups"><a ng-click="groupSelect(g.id)" href="#">{{g.name}}</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a ng-click="newGroup()" href="#">New Group</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-group">
+
+          <label for="detail-end">Font Size: </label> <input type="checkbox" ng-model="data.useDefaultFontSize">use default font size</input>
+          <input id="detail-end" type="number" class="form-control" ng-disabled="data.useDefaultFontSize" ng-model="data.fontSize" />
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button> <!-- todo -->
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="newGroupModal.html">
+      <div class="modal-header">
+        <h3 class="modal-title">New Group</h3>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="newGroupModal-name">Name:</label>
+          <input for="newGroupModal-name" type="text" class="form-control" data-ng-model="name" />
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-show="name.length > 0" ng-click="ok()">OK</button> <!-- todo -->
+        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+      </div>
+    </script>
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-touch/angular-touch.js"></script>
+    <script src="bower_components/Snap.svg/dist/snap.svg-min.js"></script>
+    <script src="bower_components/ical.js/build/ical.js"></script>
+    <script src="bower_components/dropzone/dist/min/dropzone.min.js"></script>
+    <script src="bower_components/angular-local-storage/dist/angular-local-storage.js"></script>
+    <script src="bower_components/tinycolor/tinycolor.js"></script>
+    <script src="bower_components/angular-color-picker/dist/angularjs-color-picker.js"></script>
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/timetabletool.js"></script>
+        <script src="scripts/app.js"></script>
+        <!-- endbuild -->
+</body>
+</html>
