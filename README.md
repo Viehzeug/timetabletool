@@ -1,16 +1,16 @@
-#ETH TimeTableTool
+# ETH TimeTableTool
 
 Generates better timetables based on ETH time table .ics files.
 
-# angular
+## angular
 
 This project is generated with [yo angular generator](https://github.com/yeoman/generator-angular)
 version 0.15.1.
 
-## Build & development
+### Build & development
 
 Run `grunt` for building and `grunt serve` for preview.
 
-## Testing
+### Testing
 
 Running `grunt test` will run the unit tests with karma.
